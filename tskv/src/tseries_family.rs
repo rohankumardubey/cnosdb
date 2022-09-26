@@ -705,10 +705,7 @@ impl TseriesFamily {
             i.1.write().flushing = true;
         }
 
-        FLUSH_REQ.lock().push(FlushReq {
-            mems: req_mem,
-            wait_req: 0,
-        });
+        FLUSH_REQ.lock().push(FlushReq { mems: req_mem });
         info!(
             "flush_req send,now req queue len : {}",
             FLUSH_REQ.lock().len()
@@ -1117,10 +1114,7 @@ mod test {
 
         let mem = Arc::new(RwLock::new(mem));
         let req_mem = vec![(0, mem)];
-        let flush_seq = Arc::new(Mutex::new(vec![FlushReq {
-            mems: req_mem,
-            wait_req: 0,
-        }]));
+        let flush_seq = Arc::new(Mutex::new(vec![FlushReq { mems: req_mem }]));
 
         let base_dir = "/tmp/test/ts_family/test_read_with_tomb".to_string();
         let database = "test_db".to_string();

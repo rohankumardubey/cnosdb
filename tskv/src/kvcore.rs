@@ -382,7 +382,11 @@ impl Engine for TsKv {
         let db_name = String::from_utf8(fb_points.database().unwrap().to_vec())
             .map_err(|err| Error::ErrCharacterSet)?;
 
-        let db = self.version_set.write().create_db(&db_name);
+        let db_warp = self.version_set.read().get_db(&db_name);
+        let db = match db_warp{
+            Some(database) => database,
+            None => self.version_set.write().create_db(&db_name),
+        };
         let write_group = db.read().build_write_group(fb_points.points().unwrap())?;
 
         let mut seq = 0;
